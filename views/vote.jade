@@ -5,9 +5,32 @@ block content
         h1 Vote
 
     p Drag and drop to rank the countries in order of preference!
+    link(rel="stylesheet" type="text/css" href="stylesheets/jquery.gridster.min.css")
+    link(rel="stylesheet" type="text/css" href="stylesheets/vote-grid.css")
+    script(src="javascripts/jquery.gridster.min.js" type="text/javascript" charset="utf-8")
 
-    ul
-        li Narnia
-        li Never-never Land
-        li Dorne
-        li Valyria
+    .gridster
+        ul
+            li(data-row="1" data-col="1" data-sizex="1" data-sizey="1") Narnia
+            li(data-row="2" data-col="1" data-sizex="1" data-sizey="1") Never-never Land
+            li(data-row="3" data-col="1" data-sizex="1" data-sizey="1") Dorne
+            li(data-row="4" data-col="1" data-sizex="1" data-sizey="1") Valyria
+    script.
+        var gridster;
+
+        $(function(){
+
+            gridster = $(".gridster ul").gridster({
+                widget_base_dimensions: [100, 55],
+                widget_margins: [4, 1],
+                max_cols: 1
+            }).data('gridster');
+
+
+            $('.js-serialize').on('click', function() {
+                var s = gridster.serialize();
+
+                $('#log').val(JSON.stringify(s));
+            })
+
+        });
