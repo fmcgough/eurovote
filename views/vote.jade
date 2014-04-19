@@ -11,8 +11,8 @@ block content
 
     .gridster
         ul
-            each val, index in countries
-                li(data-row=index data-col="1" data-sizex="1" data-sizey="1")= val
+            - each country in countries
+                li(data-row=country.id data-col="1" data-sizex="1" data-sizey="1") #{country.name}
     script.
         var gridster;
 
