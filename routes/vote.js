@@ -4,5 +4,5 @@
  */
 
 exports.display = function(req, res){
-  res.render('vote', {title: 'Vote'});
+  res.render('vote', {title: 'Vote', navbarActive : 'Vote'});
 };
