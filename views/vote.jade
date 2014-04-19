@@ -11,17 +11,15 @@ block content
 
     .gridster
         ul
-            li(data-row="1" data-col="1" data-sizex="1" data-sizey="1") Narnia
-            li(data-row="2" data-col="1" data-sizex="1" data-sizey="1") Never-never Land
-            li(data-row="3" data-col="1" data-sizex="1" data-sizey="1") Dorne
-            li(data-row="4" data-col="1" data-sizex="1" data-sizey="1") Valyria
+            each val, index in countries
+                li(data-row=index data-col="1" data-sizex="1" data-sizey="1")= val
     script.
         var gridster;
 
         $(function(){
 
             gridster = $(".gridster ul").gridster({
-                widget_base_dimensions: [100, 55],
+                widget_base_dimensions: [200, 55],
                 widget_margins: [4, 1],
                 max_cols: 1
             }).data('gridster');
