@@ -4,5 +4,5 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Eurovision' });
+  res.render('index', { title: 'Eurovision 2014' });
 };
