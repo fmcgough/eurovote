@@ -8,9 +8,10 @@ block content
     script(src="javascripts/jquery-ui-1.10.4.custom.min.js")
 
     form#vote-form(action="/")
-        ul#sortable
+        ul#sortable.list-unstyled
             - each country in countries
-                li(id=country.id ) #{country.name}
+                li(id=country.id)
+                    p.bg-info #{country.name}
         p
             input(type="submit" value="Submit").btn.btn-primary.btn-lg
 
