@@ -4,7 +4,7 @@
  */
 
 var pg = require('pg');
-var connUrl = "pg://myuser:password@localhost:5432/eurovision";
+var connUrl = process.env.DATABASE_URL || "pg://myuser:password@localhost:5432/eurovision";
 
 exports.index = function(req, res){
     pg.connect(connUrl, function(err, client, done)
