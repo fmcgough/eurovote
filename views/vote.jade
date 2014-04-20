@@ -9,10 +9,14 @@ block content
     link(rel="stylesheet" type="text/css" href="stylesheets/vote-grid.css")
     script(src="javascripts/jquery.gridster.min.js" type="text/javascript" charset="utf-8")
 
-    .gridster
-        ul
-            - each country in countries
-                li(data-row=country.id data-col="1" data-sizex="1" data-sizey="1") #{country.name}
+    form#vote-form(action="/")
+        .gridster
+            ul
+                - each country in countries
+                    li(data-row=country.id data-col="1" data-sizex="1" data-sizey="1") #{country.name}
+        p
+            input(type="submit" value="Submit").btn.btn-primary.btn-lg
+
     script.
         var gridster;
 
@@ -24,11 +28,10 @@ block content
                 max_cols: 1
             }).data('gridster');
 
+        });
 
-            $('.js-serialize').on('click', function() {
-                var s = gridster.serialize();
-
-                $('#log').val(JSON.stringify(s));
-            })
-
+        $('#vote-form').submit(function(event){
+            var s = gridster.serialize();
+            alert(JSON.stringify(s));
+            $.post('/submit', s);
         });

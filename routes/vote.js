@@ -24,9 +24,14 @@ exports.display = function(req, res)
             {
                 return console.error("Error performing query", err);
             }
-            res.render('vote', {title: 'Vote', 
+            res.render('vote', {title: 'Vote',
                         navbarActive : 'Vote',
                         countries : result.rows});
         });
     });
+};
+
+exports.submit = function(req, res)
+{
+    console.log("Vote submitted");
 };
