@@ -5,33 +5,13 @@ block content
         h1 Vote
 
     p Drag and drop to rank the countries in order of preference!
-    link(rel="stylesheet" type="text/css" href="stylesheets/jquery.gridster.min.css")
-    link(rel="stylesheet" type="text/css" href="stylesheets/vote-grid.css")
-    script(src="javascripts/jquery.gridster.min.js" type="text/javascript" charset="utf-8")
+    script(src="javascripts/jquery-ui-1.10.4.custom.min.js")
 
     form#vote-form(action="/")
-        .gridster
-            ul
-                - each country in countries
-                    li(data-row=country.id data-col="1" data-sizex="1" data-sizey="1") #{country.name}
+        ul#sortable
+            - each country in countries
+                li(id=country.id ) #{country.name}
         p
             input(type="submit" value="Submit").btn.btn-primary.btn-lg
 
-    script.
-        var gridster;
-
-        $(function(){
-
-            gridster = $(".gridster ul").gridster({
-                widget_base_dimensions: [200, 55],
-                widget_margins: [4, 1],
-                max_cols: 1
-            }).data('gridster');
-
-        });
-
-        $('#vote-form').submit(function(event){
-            var s = gridster.serialize();
-            alert(JSON.stringify(s));
-            $.post('/submit', s);
-        });
+    script(src="javascripts/vote-form.js" type="text/javascript" charset="utf-8")
