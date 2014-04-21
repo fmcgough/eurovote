@@ -10,7 +10,7 @@ block content
     script(src="javascripts/jquery.ui.touchpunch.min.js")
 
     form#vote-form(action="/")
-        ul#sortable.list-unstyled
+        ul#sortable.list-unstyled(data-role="listview")
             - each country in countries
                 li(id=country.id)
                     p.bg-info #{country.name}
