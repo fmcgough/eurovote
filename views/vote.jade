@@ -12,7 +12,7 @@ block content
     form#vote-form(action="/")
         ul#sortable.list-unstyled(data-role="listview")
             - each country in countries
-                li(id=country.id)
+                li(id=country.id).ui-state-default
                     p.bg-info #{country.name}
         p
             input(type="submit" value="Submit").btn.btn-primary.btn-lg
