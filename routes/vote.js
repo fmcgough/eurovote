@@ -40,10 +40,10 @@ function insertVote(position, countryArray)
         {
             return console.error("Error getting a connection", err);
         }
-        console.log("Score = " + score(position) + ", country_id = " + countryArray[position]);
+        console.log("Score = " + score(position) + ", country_id = " + JSON.stringify(countryArray[position]));
         client.query({
             text : "insert into votes(score, country_id) values ($1, $2)",
-            values : [score(position), parseInt(countryArray[position])],
+            values : [score(position), parseInt(countryArray[position].id)],
             name : "insertScore"},
             function(err, result)
         {
@@ -52,7 +52,7 @@ function insertVote(position, countryArray)
                 return console.error("Error performing query", err);
             }
             done();
-            if (position < 9)
+            if (position < 9 && position < countryArray.length - 1)
             {
                 insertVote(position + 1, countryArray);
             }

@@ -5,15 +5,14 @@ block content
         h1 Vote
 
     p Drag and drop to rank the countries in order of preference!
-    script(src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js")
-    script(src="javascripts/jquery-ui-1.10.4.custom.min.js")
-    script(src="javascripts/jquery.ui.touchpunch.min.js")
+    script(src="javascripts/jquery.nestable.js")
 
     form#vote-form(action="/")
-        ul#sortable.list-unstyled(data-role="listview")
-            - each country in countries
-                li(id=country.id).ui-state-default
-                    p.bg-info #{country.name}
+        .dd#nestable
+            ul.dd-list
+                - each country in countries
+                    li(data-id=country.id).dd-item
+                        .dd-handle #{country.name}
         p
             input(type="submit" value="Submit").btn.btn-primary.btn-lg
 
