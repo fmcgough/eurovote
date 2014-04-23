@@ -31,41 +31,44 @@ exports.display = function(req, res)
     });
 };
 
-
-function insertVote(position, countryArray)
+exports.submit = function(req, res)
 {
+    console.log("Countries: " + JSON.stringify(req.body.countries));
     pg.connect(connUrl, function(err, client, done)
     {
         if (err)
         {
-            return console.error("Error getting a connection", err);
+            throw err;
         }
-        console.log("Score = " + score(position) + ", country_id = " + JSON.stringify(countryArray[position]));
-        client.query({
-            text : "insert into votes(score, country_id) values ($1, $2)",
-            values : [score(position), parseInt(countryArray[position].id)],
-            name : "insertScore"},
-            function(err, result)
-        {
-            if (err)
-            {
-                return console.error("Error performing query", err);
-            }
-            done();
-            if (position < 9 && position < countryArray.length - 1)
-            {
-                insertVote(position + 1, countryArray);
-            }
-        });
-    });
-}
 
-exports.submit = function(req, res)
-{
-    insertVote(0, req.body.countries);
+        insertVote(0, req.body.countries, client, done);
+    });
 
     console.log("Vote submitted");
 };
+
+function insertVote(position, countryArray, client, done)
+{
+    client.query({
+        text : "insert into votes(score, country_id) values ($1, $2)",
+        values : [score(position), parseInt(countryArray[position].id)],
+        name : "insertScore"},
+        function(err, result)
+    {
+        if (err)
+        {
+            return console.error("Error performing query", err);
+        }
+        if (position < 9 && position < countryArray.length - 1)
+        {
+            insertVote(position + 1, countryArray, client, done);
+        }
+        else
+        {
+            done();
+        }
+    });
+}
 
 
 function score(position)
