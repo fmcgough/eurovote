@@ -33,7 +33,8 @@ exports.display = function(req, res)
 
 exports.submit = function(req, res)
 {
-    console.log("Countries: " + JSON.stringify(req.body.countries));
+    console.log("Votes: " + JSON.stringify(req.body.votes));
+
     pg.connect(connUrl, function(err, client, done)
     {
         if (err)
@@ -41,27 +42,30 @@ exports.submit = function(req, res)
             throw err;
         }
 
-        insertVote(0, req.body.countries, client, done);
+        insertVote(0, req.body.votes, client, done);
     });
 
     console.log("Vote submitted");
 };
 
-function insertVote(position, countryArray, client, done)
+function insertVote(position, votes, client, done)
 {
+    var vote = votes[position];
     client.query({
         text : "insert into votes(score, country_id) values ($1, $2)",
-        values : [score(position), parseInt(countryArray[position].id)],
+        values : [vote.score, vote.id],
         name : "insertScore"},
         function(err, result)
     {
         if (err)
         {
-            return console.error("Error performing query", err);
+            throw err;
         }
-        if (position < 9 && position < countryArray.length - 1)
+
+        position++;
+        if (position < votes.length)
         {
-            insertVote(position + 1, countryArray, client, done);
+            insertVote(position, votes, client, done);
         }
         else
         {
@@ -70,19 +74,3 @@ function insertVote(position, countryArray, client, done)
     });
 }
 
-
-function score(position)
-{
-    if (position === 0)
-    {
-        return 12;
-    }
-    else if (position === 1)
-    {
-        return 10;
-    }
-    else
-    {
-        return Math.max(10 - position, 0);
-    }
-}
