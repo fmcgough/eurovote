@@ -35,6 +35,13 @@ exports.submit = function(req, res)
 {
     console.log("Votes: " + JSON.stringify(req.body.votes));
 
+    insertVotes(req.body.votes);
+
+    console.log("Vote submitted");
+};
+
+function insertVotes(votes)
+{
     pg.connect(connUrl, function(err, client, done)
     {
         if (err)
@@ -42,11 +49,9 @@ exports.submit = function(req, res)
             throw err;
         }
 
-        insertVote(0, req.body.votes, client, done);
+        insertVote(0, votes, client, done);
     });
-
-    console.log("Vote submitted");
-};
+}
 
 function insertVote(position, votes, client, done)
 {
