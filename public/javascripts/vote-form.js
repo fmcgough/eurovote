@@ -5,6 +5,11 @@ $(function(){
         "listNodeName": "ul",
         "maxDepth" : 1
     });
+
+    $("ul[id='rank'] li div").text(function(index)
+    {
+        return calculateScore(index);
+    });
 });
 
 function calculateScore(position)
