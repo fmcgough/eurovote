@@ -7,8 +7,12 @@ $(function()
         var newrows;
         for (var i = 0; i < data.length; i++)
         {
-            newrows += "<tr><td>" + data[i].country
-                + "</td><td>" + data[i].score + "</td></tr>";
+            newrows += "<tr><td>"
+                    + "<span><img src=\"/images/" + data[i].country + ".png\" class=\"flag\"></span>"
+                    + data[i].country
+                    + "</td><td>"
+                    + data[i].score
+                    + "</td></tr>";
         }
         $("#results tbody").html(newrows);
     };
