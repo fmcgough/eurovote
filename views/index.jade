@@ -10,7 +10,7 @@ block content
         p
             h2 Results
             .table-responsive
-                table.table.table-euro.table-no-border
+                table#results.table.table-euro.table-no-border
                     thead
                         tr
                             th Country
@@ -20,3 +20,5 @@ block content
                             tr
                                 td #{row.country}
                                 td #{row.score}
+    script(src='/nowjs/now.js')
+    script(src='/javascripts/update.js')
