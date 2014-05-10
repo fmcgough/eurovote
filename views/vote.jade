@@ -20,7 +20,10 @@ block content
                 ul.dd-list
                     - each country in countries
                         li(data-id=country.id).dd-item
-                            .dd-handle #{country.name}
+                            .dd-handle
+                                span
+                                    img.flag-lg(src="/images/"+country.name+".png")
+                                |#{country.name}
             p
                 input(type="submit" value="Submit").btn.btn-primary.btn-lg
 
