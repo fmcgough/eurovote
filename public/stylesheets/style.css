@@ -56,10 +56,15 @@ a {
   font-size: 16px;
 }
 
-.flag {
+.flag-small {
   max-height: 22px;
   height: auto;
   width: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.flag-lg {
   padding-left: 10px;
   padding-right: 10px;
 }
