@@ -13,12 +13,12 @@ exports.index = function(req, res){
         {
             return console.error("Error getting a connection", err);
         }
-        client.query("select sum(v.score) as score,"
+        client.query("select coalesce(sum(v.score), 0) as score,"
                       + "c.name as country "
                       + "from "
-                      + "votes v join countries c on c.id = v.country_id "
+                      + "countries c left outer join votes v on c.id = v.country_id "
                       + "group by c.id "
-                      + "order by score desc", function(err, result)
+                      + "order by score desc, country asc", function(err, result)
         {
             done();
             if (err)
