@@ -18,7 +18,7 @@ exports.display = function(req, res)
         {
             return console.error("Error getting a connection", err);
         }
-        client.query("select id, name from countries", function(err, result)
+        client.query("select id, name from countries order by name asc", function(err, result)
         {
             done();
             if (err)
