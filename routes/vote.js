@@ -4,6 +4,7 @@
  */
 
 var pg = require('pg');
+var idx = require('./index');
 
 var connUrl = process.env.DATABASE_URL || "pg://myuser:password@localhost:5432/eurovision";
 
@@ -31,16 +32,19 @@ exports.display = function(req, res)
     });
 };
 
-exports.submit = function(req, res)
+exports.submit = function(updateCallback)
 {
-    console.log("Votes: " + JSON.stringify(req.body.votes));
+    return function(req, res)
+    {
+        console.log("Votes: " + JSON.stringify(req.body.votes));
 
-    insertVotes(req.body.votes);
+        insertVotes(req.body.votes, updateCallback);
 
-    console.log("Vote submitted");
+        console.log("Vote submitted");
+    };
 };
 
-function insertVotes(votes)
+function insertVotes(votes, updateCallback)
 {
     pg.connect(connUrl, function(err, client, done)
     {
@@ -49,11 +53,11 @@ function insertVotes(votes)
             throw err;
         }
 
-        insertVote(0, votes, client, done);
+        insertVote(0, votes, client, done, updateCallback);
     });
 }
 
-function insertVote(position, votes, client, done)
+function insertVote(position, votes, client, done, updateCallback)
 {
     var vote = votes[position];
     client.query({
@@ -70,11 +74,15 @@ function insertVote(position, votes, client, done)
         position++;
         if (position < votes.length)
         {
-            insertVote(position, votes, client, done);
+            insertVote(position, votes, client, done, updateCallback);
         }
         else
         {
             done();
+            idx.getVotes(function(rows)
+            {
+                updateCallback(rows);
+            });
         }
     });
 }

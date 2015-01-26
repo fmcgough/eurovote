@@ -6,7 +6,8 @@
 var pg = require('pg');
 var connUrl = process.env.DATABASE_URL || "pg://myuser:password@localhost:5432/eurovision";
 
-exports.index = function(req, res){
+exports.getVotes = function(callback)
+{
     pg.connect(connUrl, function(err, client, done)
     {
         if (err)
@@ -25,9 +26,21 @@ exports.index = function(req, res){
             {
                 return console.error("Error performing query", err);
             }
-            res.render('index', {title: 'Eurovision 2014',
-                        navbarActive : 'Home',
-                        results : result.rows});
+            callback(result.rows);
+        });
+    });
+}
+
+exports.index = function(req, res)
+{
+    exports.getVotes(function(rows)
+    {
+        res.render('index',
+        {
+          title: 'Eurovision 2014',
+          navbarActive : 'Home',
+          results : rows
         });
     });
 };
+
