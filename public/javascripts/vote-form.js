@@ -1,29 +1,21 @@
 
-$(function(){
-    $('#nestable').nestable(
-    {
+$(function() {
+    $('#nestable').nestable({
         "listNodeName": "ul",
         "maxDepth" : 1
     });
 
-    $("ul[id='rank'] li div").text(function(index)
-    {
+    $("ul[id='rank'] li div").text(function(index) {
         return calculateScore(index);
     });
 });
 
-function calculateScore(position)
-{
-    if (position === 0)
-    {
+function calculateScore(position) {
+    if (position === 0) {
         return 12;
-    }
-    else if (position === 1)
-    {
+    } else if (position === 1) {
         return 10;
-    }
-    else
-    {
+    } else {
         return Math.max(10 - position, 0);
     }
 }
@@ -32,11 +24,9 @@ $('#vote-form').submit(function(event){
     var sorted = $('#nestable').nestable('serialize');
     var votes = [];
 
-    for (var i = 0; i < sorted.length; i++)
-    {
+    for (var i = 0; i < sorted.length; i++) {
         var points = calculateScore(i);
-        if (points > 0)
-        {
+        if (points > 0) {
             votes.push({
                 id : sorted[i].id,
                 score : points
