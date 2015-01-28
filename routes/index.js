@@ -4,7 +4,7 @@
  */
 
 var pg = require('pg');
-var connUrl = process.env.DATABASE_URL || "pg://myuser:password@localhost:5432/eurovision";
+var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
 
 exports.getVotes = function(callback) {
     pg.connect(connUrl, function(err, client, done) {
