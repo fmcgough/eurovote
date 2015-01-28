@@ -5,6 +5,7 @@
 
 var pg = require('pg');
 var idx = require('./index');
+var async = require('async');
 
 var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
 
@@ -40,28 +41,22 @@ function insertVotes(votes) {
         if (err) {
             throw err;
         }
-
-        insertVote(0, votes, client, done);
-    });
-}
-
-function insertVote(position, votes, client, done) {
-    var vote = votes[position];
-    client.query({
-        text : "insert into votes(score, country_id) values ($1, $2)",
-        values : [vote.score, vote.id],
-        name : "insertScore"
-    }, function(err, result) {
-        if (err) {
-            throw err;
-        }
-
-        position++;
-        if (position < votes.length) {
-            insertVote(position, votes, client, done);
-        } else {
+        var queryConfig = {
+            text: "insert into votes(score, country_id) values ($1, $2)"
+        };
+        async.each(votes, function(vote, callback){
+            queryConfig.values = [vote.score, vote.id];
+            client.query(queryConfig, function(err, result) {
+                if (err) {
+                    throw err;
+                }
+            })
+        }, function(err){
+            if (err) {
+                throw err;
+            }
             done();
-        }
+        });
     });
 }
 
