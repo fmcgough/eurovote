@@ -8,7 +8,6 @@
   "dependencies": {
     "express": "3.4.8",
     "jade": "*",
-    "pg": "3.0.x",
-    "now": "~0.8.1"
+    "pg": "3.0.x"
   }
 }

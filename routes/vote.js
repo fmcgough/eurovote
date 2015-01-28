@@ -27,27 +27,25 @@ exports.display = function(req, res) {
     });
 };
 
-exports.submit = function(updateCallback) {
-    return function(req, res) {
-        console.log("Votes: " + JSON.stringify(req.body.votes));
+exports.submit = function(req, res) {
+    console.log("Votes: " + JSON.stringify(req.body.votes));
 
-        insertVotes(req.body.votes, updateCallback);
+    insertVotes(req.body.votes);
 
-        console.log("Vote submitted");
-    };
+    console.log("Vote submitted");
 };
 
-function insertVotes(votes, updateCallback) {
+function insertVotes(votes) {
     pg.connect(connUrl, function(err, client, done) {
         if (err) {
             throw err;
         }
 
-        insertVote(0, votes, client, done, updateCallback);
+        insertVote(0, votes, client, done);
     });
 }
 
-function insertVote(position, votes, client, done, updateCallback) {
+function insertVote(position, votes, client, done) {
     var vote = votes[position];
     client.query({
         text : "insert into votes(score, country_id) values ($1, $2)",
@@ -60,12 +58,9 @@ function insertVote(position, votes, client, done, updateCallback) {
 
         position++;
         if (position < votes.length) {
-            insertVote(position, votes, client, done, updateCallback);
+            insertVote(position, votes, client, done);
         } else {
             done();
-            idx.getVotes(function(rows) {
-                updateCallback(rows);
-            });
         }
     });
 }

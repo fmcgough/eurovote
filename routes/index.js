@@ -6,7 +6,7 @@
 var pg = require('pg');
 var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
 
-exports.getVotes = function(callback) {
+function getVotes(callback) {
     pg.connect(connUrl, function(err, client, done) {
         if (err) {
             return console.error("Error getting a connection", err);
@@ -27,7 +27,7 @@ exports.getVotes = function(callback) {
 }
 
 exports.index = function(req, res) {
-    exports.getVotes(function(rows) {
+    getVotes(function(rows) {
         res.render('index', {
           title: 'Eurovision 2014',
           navbarActive : 'Home',

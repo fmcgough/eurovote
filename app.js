@@ -28,22 +28,12 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var server = http.createServer(app);
+app.get('/', routes.index);
+app.get('/vote', vote.display);
+app.post('/submit', vote.submit);
 
-server.listen(app.get('port'), function(){
+http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-var nowjs = require('now');
-var everyone = nowjs.initialize(server);
-
-
-everyone.now.update = function(data){
-    console.log("Sending update: " + JSON.stringify(data));
-    everyone.now.receiveUpdate(data);
-}
-
-app.get('/', routes.index);
-app.get('/vote', vote.display);
-app.post('/submit', vote.submit(everyone.now.update));
 
