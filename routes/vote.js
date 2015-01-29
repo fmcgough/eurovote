@@ -29,10 +29,10 @@ exports.display = function(req, res) {
 };
 
 exports.submit = function(req, res) {
-    console.log("Votes: " + JSON.stringify(req.body.votes));
+    var votes = JSON.parse(req.body.data);
+    console.log("Votes: " + req.body.data);
 
-    insertVotes(req.body.votes);
-
+    insertVotes(votes);
     console.log("Vote submitted");
 };
 

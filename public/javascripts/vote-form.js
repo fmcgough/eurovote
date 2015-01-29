@@ -34,5 +34,8 @@ $('#vote-form').submit(function(event){
         }
     }
     console.log("Submitting votes:" + JSON.stringify(votes));
-    $.post('/submit', {votes : votes});
+    $.post('/submit', {
+        data: JSON.stringify(votes),
+        dataType: "json"
+    });
 });

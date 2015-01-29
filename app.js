@@ -4,10 +4,16 @@
  */
 
 var express = require('express');
+var morgan = require('morgan');
+var methodOverride = require('method-override');
+var bodyParser = require('body-parser');
+var errorHandler = require('errorhandler');
+var favicon = require('serve-favicon');
+
+var path = require('path');
+
 var routes = require('./routes');
 var vote = require('./routes/vote');
-var http = require('http');
-var path = require('path');
 
 var app = express();
 
@@ -15,24 +21,29 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
+// log every request to the console
+app.use(morgan('dev'));
+// parse application/json
+app.use(bodyParser.json());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({
+	extended: false
+}));
+// simulate DELETE and PUT
+app.use(methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+  app.use(errorHandler());
 }
 
 app.get('/', routes.index);
 app.get('/vote', vote.display);
 app.post('/submit', vote.submit);
 
-http.createServer(app).listen(app.get('port'), function(){
+app.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
