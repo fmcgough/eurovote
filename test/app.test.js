@@ -19,4 +19,19 @@ describe("App", function() {
 				});
 		});
 	});
+
+	describe("GET /vote", function() {
+		it("should display the voting page", function(done) {
+			request(app)
+				.get("/vote")
+				.set("Accept", "text/html")
+				.expect(200)
+				.end(function(err, response) {
+					if (err) {
+						return done(err);
+					}
+					return done();
+				});
+		});
+	})
 });

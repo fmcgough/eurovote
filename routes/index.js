@@ -29,7 +29,7 @@ function getVotes(callback) {
 exports.index = function(req, res) {
     getVotes(function(rows) {
         res.render('index', {
-          title: 'Eurovision 2014',
+          title: 'Eurovision 2015',
           navbarActive : 'Home',
           results : rows
         });
