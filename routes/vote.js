@@ -4,7 +4,6 @@
  */
 
 var pg = require('pg');
-var idx = require('./index');
 var async = require('async');
 
 var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
