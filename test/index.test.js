@@ -13,21 +13,16 @@ var index = proxyquire("../routes/index", {
 	'pg' : pgStub
 });
 
-pgStub.connect = function(url, callback) {
-	callback(null, clientStub, done);
-};
-
-clientStub.query = function(sql, callback) {
-	var results = { rows: votes };
-	callback(null, results);
-};
-
+pgStub.connect = sinon.stub();
+clientStub.query = sinon.stub();
 
 describe("routes/index", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
 
 	beforeEach(function() {
+		pgStub.connect.callsArgWith(1, null, clientStub, done);
+		clientStub.query.callsArgWith(1, null, { rows: votes });
 		spy.reset();
 		done.reset();
 	});
