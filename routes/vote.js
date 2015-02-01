@@ -27,10 +27,7 @@ exports.display = function(req, res) {
 
 exports.submit = function(req, res) {
     var votes = JSON.parse(req.body.data);
-    console.log("Votes: " + req.body.data);
-
     insertVotes(votes);
-    console.log("Vote submitted");
 };
 
 function insertVotes(votes) {
@@ -45,8 +42,9 @@ function insertVotes(votes) {
             queryConfig.values = [vote.score, vote.id];
             client.query(queryConfig, function(err, result) {
                 if (err) {
-                    throw err;
+                    callback(err);
                 }
+                callback();
             })
         }, function(err){
             if (err) {

@@ -10,9 +10,8 @@ var vote = proxyquire("../routes/vote", {
 	"pg": pgStub
 });
 
-pgStub.connect = function(url, callback) {
-	callback(null, clientStub, done);
-};
+pgStub.connect = sinon.stub();
+clientStub.query = sinon.stub();
 
 describe("routes/vote", function() {
 	var req = {}, res = {};
@@ -20,6 +19,7 @@ describe("routes/vote", function() {
 	var query
 
 	beforeEach(function() {
+		pgStub.connect.callsArgWith(1, null, clientStub, done);
 		spy.reset();
 		done.reset();
 	});
@@ -28,9 +28,10 @@ describe("routes/vote", function() {
 		var countries = [ { id: 1, name: "Narnia" },
 		                  { id: 2, name: "Transylvania" }];
 
-		clientStub.query = function(sql, callback) {
-			callback(null, { rows : countries });
-		};
+		beforeEach(function() {
+			clientStub.query.reset();
+			clientStub.query.callsArgWith(1, null, { rows: countries });
+		});
 
 		it("should render voting page", function() {
 			vote.display(req, res);
@@ -58,6 +59,38 @@ describe("routes/vote", function() {
 			vote.display(req, res);
 
 			expect(done.calledOnce).to.equal(true);
+		});
+	});
+
+	describe("POST /submit", function() {
+		var votes = [ { id: 1, score: 12 },
+		              { id: 2, score: 10 },
+		              { id: 3, score: 8 } ];
+		var req = {};
+		req.body = { data: JSON.stringify(votes) };
+
+		beforeEach(function() {
+			clientStub.query.reset();
+			clientStub.query.callsArg(1);
+		});
+
+		it("should insert all the votes", function() {
+			vote.submit(req, res);
+
+			expect(clientStub.query.callCount).to.equal(votes.length);
+			for (var i = 0; i < clientStub.query.callCount; i++) {
+				var call = clientStub.query.getCall(i);
+				expect(call.calledWith(sinon.match({
+					values: [ votes[i].score, votes[i].id ]
+				})));
+			}
+		});
+
+		it("should call done() after inserting the votes", function() {
+			vote.submit(req, res);
+			expect(done.callCount).to.equal(1);
+			expect(done.calledAfter(clientStub.query)).to.equal(true);
+			expect(done.calledBefore(clientStub.query)).to.equal(false);
 		});
 	});
 });
