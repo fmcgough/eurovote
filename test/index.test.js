@@ -23,11 +23,12 @@ clientStub.query = function(sql, callback) {
 };
 
 
-describe("index", function() {
+describe("routes/index", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
 
 	beforeEach(function() {
+		spy.reset();
 		done.reset();
 	});
 

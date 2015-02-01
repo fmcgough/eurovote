@@ -8,8 +8,6 @@ var async = require('async');
 
 var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
 
-var countries;
-
 exports.display = function(req, res) {
     pg.connect(connUrl, function(err, client, done) {
         if (err) {
