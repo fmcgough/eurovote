@@ -27,13 +27,20 @@ exports.display = function(req, res) {
 
 exports.submit = function(req, res) {
     var votes = JSON.parse(req.body.data);
-    insertVotes(votes);
+    insertVotes(votes, function(err) {
+        if (err) {
+            res.status(500).send("Sorry, something went wrong!");
+        } else {
+        	res.sendStatus(200);
+        }
+    });
 };
 
-function insertVotes(votes) {
+function insertVotes(votes, complete) {
     pg.connect(connUrl, function(err, client, done) {
         if (err) {
-            throw err;
+        	done();
+        	complete(err);
         }
         var queryConfig = {
             text: "insert into votes(score, country_id) values ($1, $2)"
@@ -41,16 +48,11 @@ function insertVotes(votes) {
         async.each(votes, function(vote, callback){
             queryConfig.values = [vote.score, vote.id];
             client.query(queryConfig, function(err, result) {
-                if (err) {
-                    callback(err);
-                }
-                callback();
-            })
+                callback(err);
+            });
         }, function(err){
-            if (err) {
-                throw err;
-            }
             done();
+            complete(err);
         });
     });
 }

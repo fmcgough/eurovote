@@ -16,7 +16,6 @@ clientStub.query = sinon.stub();
 describe("routes/vote", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
-	var query
 
 	beforeEach(function() {
 		pgStub.connect.callsArgWith(1, null, clientStub, done);
@@ -68,6 +67,10 @@ describe("routes/vote", function() {
 		              { id: 3, score: 8 } ];
 		var req = {};
 		req.body = { data: JSON.stringify(votes) };
+		
+		res.send = sinon.stub();
+		res.sendStatus = sinon.stub();
+		res.status = sinon.stub().returns(res);
 
 		beforeEach(function() {
 			clientStub.query.reset();
@@ -91,6 +94,23 @@ describe("routes/vote", function() {
 			expect(done.callCount).to.equal(1);
 			expect(done.calledAfter(clientStub.query)).to.equal(true);
 			expect(done.calledBefore(clientStub.query)).to.equal(false);
+		});
+		
+		it("should respond OK if no error thrown", function() {
+			vote.submit(req, res);
+			
+			expect(res.sendStatus.calledWith(200)).to.equal(true);
+		});
+		
+		it("should respond with an error message if there is an error", function() {
+			var err = "test error";
+			clientStub.query.callsArgWith(1, err);
+			
+			vote.submit(req, res);
+			
+			expect(done.calledBefore(res.status)).to.equal(true);
+			expect(res.status.calledWith(500)).to.equal(true);
+			expect(res.send.calledOnce).to.equal(true);
 		});
 	});
 });

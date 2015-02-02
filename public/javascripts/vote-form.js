@@ -21,6 +21,7 @@ function calculateScore(position) {
 }
 
 $('#vote-form').submit(function(event){
+	event.preventDefault();
     var sorted = $('#nestable').nestable('serialize');
     var votes = [];
 
@@ -37,5 +38,9 @@ $('#vote-form').submit(function(event){
     $.post('/submit', {
         data: JSON.stringify(votes),
         dataType: "json"
+    }).done(function(){
+    	window.location = "/";
+    }).error(function(xhr, status, description) {
+    	alert(description);
     });
 });
