@@ -1,4 +1,4 @@
 eurovote
 ========
 
-Eurovision 2014 voting web app
+Eurovision 2015 voting web app
