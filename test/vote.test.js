@@ -2,34 +2,34 @@ var expect = require("chai").expect,
 	proxyquire = require("proxyquire"),
 	sinon = require("sinon");
 
-var pgStub = {},
-	clientStub = {},
-	done = sinon.spy();
+var models = {};
 
 var vote = proxyquire("../routes/vote", {
-	"pg": pgStub
+	"../models": models
 });
 
-pgStub.connect = sinon.stub();
-clientStub.query = sinon.stub();
+var Vote = models.Vote = sinon.stub();
+var Country = models.Country = sinon.stub();
 
 describe("routes/vote", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
 
 	beforeEach(function() {
-		pgStub.connect.callsArgWith(1, null, clientStub, done);
 		spy.reset();
-		done.reset();
 	});
 
 	describe("GET voting page", function() {
 		var countries = [ { id: 1, name: "Narnia" },
-		                  { id: 2, name: "Transylvania" }];
+				{ id: 2, name: "Transylvania" }];
+		var promise = sinon.stub();
+		promise.then = sinon.stub();
+
 
 		beforeEach(function() {
-			clientStub.query.reset();
-			clientStub.query.callsArgWith(1, null, { rows: countries });
+			Country.findAll = sinon.stub();
+			Country.findAll.returns(promise);
+			promise.then.callsArgWith(0, countries);
 		});
 
 		it("should render voting page", function() {
@@ -54,10 +54,11 @@ describe("routes/vote", function() {
 			expect(locals).to.have.property("countries").that.deep.equals(countries);
 		});
 
-		it("should call done() after retrieving results", function() {
+		it("should order the countries by name", function() {
 			vote.display(req, res);
 
-			expect(done.calledOnce).to.equal(true);
+			var call = Country.findAll.getCall(0);
+			expect(call.args[0]).to.have.property("order").that.equals("name ASC");
 		});
 	});
 
@@ -67,48 +68,46 @@ describe("routes/vote", function() {
 		              { id: 3, score: 8 } ];
 		var req = {};
 		req.body = { data: JSON.stringify(votes) };
-		
+
 		res.send = sinon.stub();
 		res.sendStatus = sinon.stub();
 		res.status = sinon.stub().returns(res);
+		var promise = sinon.stub();
+		promise.complete = sinon.stub();
+		Vote.create = sinon.stub().returns(promise);
 
 		beforeEach(function() {
-			clientStub.query.reset();
-			clientStub.query.callsArg(1);
+			Vote.create.reset();
+			Vote.create.returns(promise);
+			promise.complete.reset();
+			promise.complete.callsArg(0);
 		});
 
 		it("should insert all the votes", function() {
 			vote.submit(req, res);
 
-			expect(clientStub.query.callCount).to.equal(votes.length);
-			for (var i = 0; i < clientStub.query.callCount; i++) {
-				var call = clientStub.query.getCall(i);
+			expect(Vote.create.callCount).to.equal(votes.length);
+			for (var i = 0; i < Vote.create.callCount; i++) {
+				var call = Vote.create.getCall(i);
 				expect(call.calledWith(sinon.match({
-					values: [ votes[i].score, votes[i].id ]
+					CountryId: votes[i].id,
+					score: votes[i].score
 				})));
 			}
 		});
 
-		it("should call done() after inserting the votes", function() {
-			vote.submit(req, res);
-			expect(done.callCount).to.equal(1);
-			expect(done.calledAfter(clientStub.query)).to.equal(true);
-			expect(done.calledBefore(clientStub.query)).to.equal(false);
-		});
-		
 		it("should respond OK if no error thrown", function() {
 			vote.submit(req, res);
-			
+
 			expect(res.sendStatus.calledWith(200)).to.equal(true);
 		});
-		
+
 		it("should respond with an error message if there is an error", function() {
 			var err = "test error";
-			clientStub.query.callsArgWith(1, err);
-			
+			promise.complete.callsArgWith(0, err);
+
 			vote.submit(req, res);
-			
-			expect(done.calledBefore(res.status)).to.equal(true);
+
 			expect(res.status.calledWith(500)).to.equal(true);
 			expect(res.send.calledOnce).to.equal(true);
 		});

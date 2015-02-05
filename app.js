@@ -14,6 +14,7 @@ var path = require('path');
 
 var routes = require('./routes');
 var vote = require('./routes/vote');
+var models = require('./models');
 
 var app = express();
 
@@ -43,8 +44,10 @@ app.get('/', routes.index);
 app.get('/vote', vote.display);
 app.post('/submit', vote.submit);
 
-app.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+models.sequelize.sync().then(function() {
+	app.listen(app.get('port'), function(){
+		console.log('Express server listening on port ' + app.get('port'));
+	});
 });
 
 exports.app = app;

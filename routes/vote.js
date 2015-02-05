@@ -3,26 +3,19 @@
  * GET voting page
  */
 
-var pg = require('pg');
 var async = require('async');
-
-var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
+var models = require("../models");
 
 exports.display = function(req, res) {
-    pg.connect(connUrl, function(err, client, done) {
-        if (err) {
-            return console.error("Error getting a connection", err);
-        }
-        client.query("select id, name from countries order by name asc", function(err, result) {
-            done();
-            if (err) {
-                return console.error("Error performing query", err);
-            }
-            res.render('vote', {title: 'Vote',
-                        navbarActive : 'Vote',
-                        countries : result.rows});
-        });
-    });
+	models.Country.findAll({
+		order: "name ASC"
+	}).then(function(countries) {
+		res.render("vote", {
+			title: "Vote",
+			navbarActive: "Vote",
+			countries: countries
+		});
+	});
 };
 
 exports.submit = function(req, res) {
@@ -37,23 +30,15 @@ exports.submit = function(req, res) {
 };
 
 function insertVotes(votes, complete) {
-    pg.connect(connUrl, function(err, client, done) {
-        if (err) {
-        	done();
-        	complete(err);
-        }
-        var queryConfig = {
-            text: "insert into votes(score, country_id) values ($1, $2)"
-        };
-        async.each(votes, function(vote, callback){
-            queryConfig.values = [vote.score, vote.id];
-            client.query(queryConfig, function(err, result) {
-                callback(err);
-            });
-        }, function(err){
-            done();
-            complete(err);
-        });
+	async.each(votes, function(vote, callback){
+    	models.Vote.create({
+    		CountryId: vote.id,
+    		score: vote.score
+    	}).complete(function(err, result) {
+    		callback(err);
+    	});
+    }, function(err){
+        complete(err);
     });
 }
 

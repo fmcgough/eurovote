@@ -2,29 +2,33 @@ var expect = require("chai").expect,
 	proxyquire = require("proxyquire"),
 	sinon = require("sinon");
 
-var pgStub = {},
-	clientStub = {},
-	done = sinon.spy();
+var models = {};
 
-var votes = [ { score: 12, country: "Narnia" },
-              { score: 10, country: "Archenland" } ];
+var countries = [ { id: 0,
+				name: "Narnia",
+				Votes: [{ dataValues: { total: 12 }}] },
+              { id: 1,
+				name: "Archenland",
+				Votes: [{dataValues: {total: 10}}]} ];
 
 var index = proxyquire("../routes/index", {
-	'pg' : pgStub
+	'../models': models
 });
 
-pgStub.connect = sinon.stub();
-clientStub.query = sinon.stub();
+var Country = models.Country = sinon.stub();
+var Vote = models.Vote = sinon.stub();
 
 describe("routes/index", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
+	var promise = sinon.stub();
+	promise.then = sinon.stub().callsArgWith(0, countries);
+	Country.findAll = sinon.stub().returns(promise);
 
 	beforeEach(function() {
-		pgStub.connect.callsArgWith(1, null, clientStub, done);
-		clientStub.query.callsArgWith(1, null, { rows: votes });
 		spy.reset();
-		done.reset();
+		promise.then.reset();
+		Country.findAll.reset();
 	});
 
 	it("should render home page", function() {
@@ -42,15 +46,10 @@ describe("routes/index", function() {
 		expect(locals).to.have.property("navbarActive").that.equals("Home");
 	});
 
-	it("should include votes in the response", function() {
+	it("should include countries in the response", function() {
 		index.index(req, res);
 
 		var locals = spy.args[0][1];
-		expect(locals).to.have.property("results").that.equals(votes);
-	});
-
-	it("should call done() after retrieving results", function() {
-		index.index(req, res);
-		expect(done.calledOnce).to.equal(true);
+		expect(locals).to.have.property("countries").that.deep.equals(countries);
 	});
 });

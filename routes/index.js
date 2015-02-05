@@ -3,36 +3,26 @@
  * GET home page.
  */
 
-var pg = require('pg');
-var connUrl = process.env.DATABASE_URL || "pg://ev_user:fabulous@localhost:5432/eurovision";
-
-function getVotes(callback) {
-    pg.connect(connUrl, function(err, client, done) {
-        if (err) {
-            return console.error("Error getting a connection", err);
-        }
-        client.query("select coalesce(sum(v.score), 0) as score,"
-                      + "c.name as country "
-                      + "from "
-                      + "countries c left outer join votes v on c.id = v.country_id "
-                      + "group by c.id "
-                      + "order by score desc, country asc", function(err, result) {
-            done();
-            if (err) {
-                return console.error("Error performing query", err);
-            }
-            callback(result.rows);
-        });
-    });
-}
+var models = require("../models");
+var sequelize = models.sequelize;
 
 exports.index = function(req, res) {
-    getVotes(function(rows) {
-        res.render('index', {
-          title: 'Eurovision 2015',
-          navbarActive : 'Home',
-          results : rows
-        });
-    });
+	models.Country.findAll({
+		include: [{
+			model: models.Vote,
+			attributes: [[sequelize.fn("SUM", sequelize.col("Votes.score")), "total"]]
+		}],
+		group: [ "Country.id" ]
+	}).then(function(countries){
+		for (var i in countries) {
+			// Set the total score as a top-level property on the object
+			countries[i].total = countries[i].Votes[0].dataValues.total;
+		}
+		res.render("index", {
+			title: "Eurovision 2015",
+			navbarActive: "Home",
+			countries: countries
+		});
+	});
 };
 

@@ -13,11 +13,11 @@ block content
                             th Country
                             th Score
                     tbody
-                        - each row in results
+                        - each country in countries
                             tr
                                 td
                                     span
-                                        img.flag-small(src="/images/"+row.country+".png")
-                                    |#{row.country}
-                                td #{row.score}
+                                        img.flag-small(src="/images/" + country.name + ".png")
+                                    |#{country.name}
+                                td #{country.total}
     script(src='/javascripts/update.js')
