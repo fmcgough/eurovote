@@ -9,15 +9,13 @@ var sequelize = models.sequelize;
 exports.index = function(req, res) {
 	models.Country.findAll({
 		include: [{
-			model: models.Vote,
-			attributes: [[sequelize.fn("SUM", sequelize.col("Votes.score")), "total"]]
+			model: models.Vote
 		}],
-		group: [ "Country.id" ]
+		attributes: [[sequelize.fn("SUM", sequelize.col("Votes.score")), "total"],
+					[sequelize.col("Country.name"), "name"]],
+		group: [ "Country.id" ],
+		order: "total DESC"
 	}).then(function(countries){
-		for (var i in countries) {
-			// Set the total score as a top-level property on the object
-			countries[i].total = countries[i].Votes[0].dataValues.total;
-		}
 		res.render("index", {
 			title: "Eurovision 2015",
 			navbarActive: "Home",
@@ -25,4 +23,3 @@ exports.index = function(req, res) {
 		});
 	});
 };
-

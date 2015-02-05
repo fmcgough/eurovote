@@ -6,10 +6,10 @@ var models = {};
 
 var countries = [ { id: 0,
 				name: "Narnia",
-				Votes: [{ dataValues: { total: 12 }}] },
+			 	dataValues: { total: 12 } },
               { id: 1,
 				name: "Archenland",
-				Votes: [{dataValues: {total: 10}}]} ];
+				dataValues: {total: 10} } ];
 
 var index = proxyquire("../routes/index", {
 	'../models': models
@@ -51,5 +51,10 @@ describe("routes/index", function() {
 
 		var locals = spy.args[0][1];
 		expect(locals).to.have.property("countries").that.deep.equals(countries);
+	});
+
+	it("should order countries by score", function() {
+		index.index(req, res);
+		expect(Country.findAll.args[0][0]).to.have.property("order").that.equals("total DESC");
 	});
 });
