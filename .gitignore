@@ -5,3 +5,4 @@ node_modules/
 .project
 .tern-project
 .nide
+.settings/
