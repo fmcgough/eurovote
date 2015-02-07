@@ -14,3 +14,14 @@
                         li.active: a(href=url)=page
                     else
                         li: a(href=url)=page
+            .navbar-right
+                if isAuthenticated
+                    button.btn.btn-link.navbar-btn.navbar-right
+                        a(href="/logout") Log out
+                    strong.navbar-text
+                        span.glyphicon.glyphicon-user(aria-hidden="true")  #{username}
+                else
+                    button.btn.btn-link.navbar-btn.btn-right
+                        a(href="/login") Log in
+                    button.btn.btn-link.navbar-btn.btn-right
+                        a(href="/signup") Sign up

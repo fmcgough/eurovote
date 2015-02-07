@@ -34,21 +34,19 @@ exports.signup = function(req, res) {
         where: {username: req.form.username}
     }).then(function(users){
         if (users.length > 0) {
-            signupError(["Username is already in use"], 500, res);
-            return;
+            return signupError(["Username is already in use"], 500, res);
         }
         User.findAll({
             where: {email: req.form.email}
         }).then(function(users){
             if (users.length > 0) {
-                signupError(["User already exists for this email address"], 500, res);
-                return;
+                return signupError(["User already exists for this email address"],
+                    500, res);
             }
 
             hashPassword(req.form.password, function(err, hash){
                 if (err) {
-                    signupError([err], 500, res);
-                    return;
+                    return signupError([err], 500, res);
                 }
                 User.create({
                     username: req.form.username,
@@ -56,14 +54,17 @@ exports.signup = function(req, res) {
                     passwordHash: hash
                 }).complete(function(err, user){
                     if (err)  {
-                        signupError([err], 500, res);
-                        return;
+                        return signupError([err], 500, res);
                     }
                     // TODO send confirmation email
                     // Store in session
-                    req.session.user = user;
-                    // Redirect to home page
-                    res.redirect("/");
+                    req.logIn(user, function(err) {
+                        if (err) {
+                            return signupError([err], 500, res);
+                        }
+
+                        return res.redirect('/');
+                    });
                 });
             });
         });

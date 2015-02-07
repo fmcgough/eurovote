@@ -108,6 +108,7 @@ describe("/signup", function() {
     describe("POST /signup", function() {
         var userCreated = {username: "someuser", id: 1};
         var redirect = res.redirect = sinon.stub();
+        var logIn = req.logIn = sinon.stub().callsArg(1);
 
         beforeEach(function() {
             promise = sinon.stub();
@@ -127,6 +128,7 @@ describe("/signup", function() {
             bcrypt.hash = sinon.stub().callsArgWith(3, null, "TEST_HASH")
             req.session = {};
             redirect.reset();
+            logIn.reset();
         });
 
         it("should display the signup page with errors if form is invalid", function() {
@@ -187,15 +189,9 @@ describe("/signup", function() {
 
         it("should send a confirmation email");
 
-        it("should save user in the session", function() {
+        it("should login and redirect to the home page", function() {
             signup.signup(req, res);
-
-            expect(req.session).to.have.property("user")
-                .that.deep.equals(userCreated);
-        });
-
-        it("should redirect to the home page after successful completion", function() {
-            signup.signup(req, res);
+            expect(logIn.calledOnce).to.equal(true);
             expect(redirect.calledOnce).to.equal(true);
             expect(redirect.calledWith("/")).to.equal(true);
         });

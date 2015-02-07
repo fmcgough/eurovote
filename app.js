@@ -16,7 +16,8 @@ var routes = require('./routes');
 var vote = require('./routes/vote');
 var models = require('./models');
 var signup = require('./routes/signup');
-var passport = require('./routes/login').passport;
+var login = require('./routes/login');
+var passport = login.passport;
 
 var app = express();
 
@@ -50,12 +51,18 @@ if ('development' == app.get('env')) {
 
 app.use(passport.initialize());
 app.use(passport.session());
+// Helper middleware to give easy access to logged in username
+app.use(login.locals);
 
+// TODO extract into separate router module
 app.get('/', routes.index);
 app.get('/vote', vote.display);
 app.post('/submit', vote.submit);
 app.get('/signup', signup.display);
 app.post('/signup', signup.validator, signup.signup);
+app.get("/login", login.display);
+app.post("/login", login.login);
+app.get("/logout", login.logout);
 
 models.sequelize.sync().then(function() {
 	app.listen(app.get('port'), function(){
