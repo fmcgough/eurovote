@@ -9,12 +9,14 @@ var methodOverride = require('method-override');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var favicon = require('serve-favicon');
-
 var path = require('path');
+var session = require('express-session');
 
 var routes = require('./routes');
 var vote = require('./routes/vote');
 var models = require('./models');
+var signup = require('./routes/signup');
+var passport = require('./routes/login').passport;
 
 var app = express();
 
@@ -33,16 +35,27 @@ app.use(bodyParser.urlencoded({
 }));
 // simulate DELETE and PUT
 app.use(methodOverride());
+
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+	secret: "supersupersecret",
+	resave: false,
+	saveUninitialized: false
+}));
 
 // development only
 if ('development' == app.get('env')) {
   app.use(errorHandler());
 }
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get('/', routes.index);
 app.get('/vote', vote.display);
 app.post('/submit', vote.submit);
+app.get('/signup', signup.display);
+app.post('/signup', signup.validator, signup.signup);
 
 models.sequelize.sync().then(function() {
 	app.listen(app.get('port'), function(){
