@@ -197,7 +197,7 @@ describe("/signup", function() {
         it("should redirect to the home page after successful completion", function() {
             signup.signup(req, res);
             expect(redirect.calledOnce).to.equal(true);
-            expect(redirect.calledWith(200, "/")).to.equal(true);
+            expect(redirect.calledWith("/")).to.equal(true);
         });
     });
 });

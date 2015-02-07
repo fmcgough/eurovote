@@ -63,7 +63,7 @@ exports.signup = function(req, res) {
                     // Store in session
                     req.session.user = user;
                     // Redirect to home page
-                    res.redirect(200, "/");
+                    res.redirect("/");
                 });
             });
         });
