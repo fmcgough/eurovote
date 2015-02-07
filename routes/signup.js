@@ -45,20 +45,26 @@ exports.signup = function(req, res) {
                 return;
             }
 
-            User.create({
-                username: req.form.username,
-                email: req.form.email,
-                passwordHash: bcrypt.hashSync(req.form.password)
-            }).complete(function(err, user){
-                if (err)  {
+            hashPassword(req.form.password, function(err, hash){
+                if (err) {
                     signupError([err], 500, res);
                     return;
                 }
-                // TODO send confirmation email
-                // Store in session
-                req.session.user = user;
-                // Redirect to home page
-                res.redirect(200, "/");
+                User.create({
+                    username: req.form.username,
+                    email: req.form.email,
+                    passwordHash: hash
+                }).complete(function(err, user){
+                    if (err)  {
+                        signupError([err], 500, res);
+                        return;
+                    }
+                    // TODO send confirmation email
+                    // Store in session
+                    req.session.user = user;
+                    // Redirect to home page
+                    res.redirect(200, "/");
+                });
             });
         });
     });
@@ -68,5 +74,11 @@ function signupError(errors, status, res) {
     res.status(status).render("signup", {
         title: "Sign Up",
         errors: errors
+    });
+}
+
+function hashPassword(password, callback) {
+    bcrypt.genSalt(10, function(salt) {
+        bcrypt.hash(password, salt, null, callback);
     });
 }

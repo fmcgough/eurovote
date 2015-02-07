@@ -123,7 +123,8 @@ describe("/signup", function() {
                 password: "12345678",
                 confirmPassword: "12345678"
             };
-            bcrypt.hashSync = sinon.stub().returns("TEST_HASH");
+            bcrypt.genSalt = sinon.stub().callsArg(1);
+            bcrypt.hash = sinon.stub().callsArgWith(3, null, "TEST_HASH")
             req.session = {};
             redirect.reset();
         });
