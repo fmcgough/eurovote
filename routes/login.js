@@ -113,3 +113,10 @@ exports.locals = function(req, res, next) {
     }
     next();
 };
+
+exports.authenticated = function(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/login");
+}

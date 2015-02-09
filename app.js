@@ -54,10 +54,11 @@ app.use(passport.session());
 // Helper middleware to give easy access to logged in username
 app.use(login.locals);
 
+var authenticated = login.authenticated;
 // TODO extract into separate router module
-app.get('/', routes.index);
-app.get('/vote', vote.display);
-app.post('/submit', vote.submit);
+app.get('/', authenticated, routes.index);
+app.get('/vote', authenticated, vote.display);
+app.post('/submit', authenticated, vote.submit);
 app.get('/signup', signup.display);
 app.post('/signup', signup.validator, signup.signup);
 app.get("/login", login.display);
