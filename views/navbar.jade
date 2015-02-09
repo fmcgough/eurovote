@@ -9,7 +9,7 @@
             a.navbar-brand(href="/") Eurovision 2015
         .collapse.navbar-collapse
             ul.nav.navbar-nav
-                each page, url in {'/' : 'Home', '/vote' : 'Vote'}
+                each page, url in {'/' : 'Home', '/vote' : 'Vote', '/group' : 'Group'}
                     if navbarActive === page
                         li.active: a(href=url)=page
                     else

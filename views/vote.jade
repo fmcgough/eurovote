@@ -1,30 +1,31 @@
 extends layout
 
 block content
+    .row
+        .transparent-grey.col-md-12
+            h1 Vote
 
-    .page-header
-        h1 Vote
-
-    p Drag and drop to rank the countries in order of preference!
+            p Drag and drop to rank the countries in order of preference!
     script(src="javascripts/jquery.nestable.js")
 
-    .col-xs-1
-        ul#rank.dd-list
-            - each country in countries
-                li.dd-item
-                    .dd-static
+    .row
+        .col-xs-1
+            ul#rank.dd-list
+                - each country in countries
+                    li.dd-item
+                        .dd-static
 
-    .col-xs-11
-        form#vote-form(action="/")
-            .dd#nestable
-                ul.dd-list
-                    - each country in countries
-                        li(data-id=country.id).dd-item
-                            .dd-handle
-                                span
-                                    img.flag-lg(src="/images/"+country.name+".png")
-                                |#{country.name}
-            p.submit-vote
-                input(type="submit" value="Submit").btn.btn-lg.btn-vote
+        .col-xs-11.no-gutter-right
+            form#vote-form(action="/")
+                .dd#nestable
+                    ul.dd-list
+                        - each country in countries
+                            li(data-id=country.id).dd-item
+                                .dd-handle
+                                    span
+                                        img.flag-lg(src="/images/"+country.name+".png")
+                                    |#{country.name}
+                p.submit-vote
+                    input(type="submit" value="Submit").btn.btn-lg.btn-vote
 
     script(src="javascripts/vote-form.js" type="text/javascript" charset="utf-8")

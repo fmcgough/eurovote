@@ -1,7 +1,7 @@
 body {
   padding: 60px;
   color: #dddddd;
-  background-image: url('/images/bg-joinus.jpg');
+  background-image: url('/images/bg_buildingbridges_v2.jpg');
   -webkit-background-size: cover; /* For WebKit*/
   -moz-background-size: cover;    /* Mozilla*/
   -o-background-size: cover;      /* Opera*/
@@ -41,6 +41,11 @@ a {
 .table-euro > thead > tr > th {
   background-color: rgba(255, 255, 255, 0.7);
   color: #AB00D6;
+}
+
+.transparent-grey {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #dddddd;
 }
 
 .table-no-border > thead > tr > th,
@@ -89,6 +94,13 @@ a {
   padding: 10px 10px;
 }
 
+.no-gutter-left {
+    padding-left: 0!important;
+}
+
+.no-gutter-right {
+    padding-right: 0!important;
+}
 
 /* Nestable things */
 .dd {
@@ -111,7 +123,7 @@ a {
   list-style: none;
 }
 .dd-list .dd-list {
-  padding-left: 30px;
+  padding-left: 0px;
 }
 .dd-collapsed .dd-list {
   display: none;

@@ -2,22 +2,21 @@ extends layout
 
 block content
     .container.theme-showcase(role="main")
-        p.lead Welcome to #{title}! Cast your votes <a href='/vote'>here</a>.
+        p.lead.transparent-grey.panel-body Welcome to #{title}! Cast your votes <a href='/vote'>here</a>.
 
-        p
-            h2 Results
-            .table-responsive
-                table#results.table.table-euro.table-no-border
-                    thead
+        h2.col-md-3.panel-body.transparent-grey Results
+        .table-responsive
+            table#results.table.table-euro.table-no-border
+                thead
+                    tr
+                        th Country
+                        th Score
+                tbody
+                    - each country in countries
                         tr
-                            th Country
-                            th Score
-                    tbody
-                        - each country in countries
-                            tr
-                                td
-                                    span
-                                        img.flag-small(src="/images/" + country.name + ".png")
-                                    |#{country.name}
-                                td #{country.dataValues.total}
+                            td
+                                span
+                                    img.flag-small(src="/images/" + country.name + ".png")
+                                |#{country.name}
+                            td #{country.dataValues.total}
     script(src='/javascripts/update.js')
