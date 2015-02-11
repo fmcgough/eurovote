@@ -3,7 +3,8 @@
 
 module.exports = function(sequelize, DataTypes) {
     var Group = sequelize.define("Group", {
-        name: DataTypes.STRING,
+        name: {type: DataTypes.STRING, unique: true},
+        code: {type: DataTypes.STRING, unique: true}
     },{
         classMethods: {
             associate: function(models) {

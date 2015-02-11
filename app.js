@@ -17,6 +17,7 @@ var vote = require('./routes/vote');
 var models = require('./models');
 var signup = require('./routes/signup');
 var login = require('./routes/login');
+var group = require("./routes/group");
 var passport = login.passport;
 
 var app = express();
@@ -59,6 +60,10 @@ var authenticated = login.authenticated;
 app.get('/', authenticated, routes.index);
 app.get('/vote', authenticated, vote.display);
 app.post('/submit', authenticated, vote.submit);
+app.get("/group", authenticated, group.display);
+app.post("/group/create", authenticated, group.createValidator, group.create);
+app.post("/group/join", authenticated, group.join);
+
 app.get('/signup', signup.display);
 app.post('/signup', signup.validator, signup.signup);
 app.get("/login", login.display);
