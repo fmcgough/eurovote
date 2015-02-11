@@ -5,7 +5,7 @@ var models = require("../../models"),
     field = form.field;
 
 exports.display = function(req, res) {
-    var group = req.user.getGroup()
+    var group = req.user.getGroup({include: [User]})
         .success(function(group){
             res.render("group", {
                 title: "Group",
@@ -59,8 +59,8 @@ function createGroupErrors(res, errors) {
 }
 
 function createCode(groupName) {
-    var substring = groupName.replace(/ /g, "").substring(0, 4).toUpperCase();
-    var random = Math.floor(Math.random() * 9000) + 1000;
+    var substring = groupName.replace(/ /g, "").substring(0, 5).toUpperCase();
+    var random = Math.floor(Math.random() * 900) + 100;
     return substring + random;
 }
 

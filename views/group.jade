@@ -4,9 +4,18 @@ block content
     .col-md-offset-3.col-md-6.transparent-grey.container
         if group
             .row.panel-body
-                p Group: #{group.name}
-                p Code: #{group.code}
-            // show the group members
+                h1 #{group.name}
+                h3 Code:
+                    b  #{group.code}
+                .table-responsive
+                    table.table.table-euro.table-no-border
+                        thead
+                            tr
+                                th Members
+                        tbody
+                            each user in group.Users
+                                tr
+                                    td= user.username
         else
             .row.panel-body
                 h1 Join a group
