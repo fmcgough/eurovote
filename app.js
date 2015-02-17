@@ -60,9 +60,9 @@ var authenticated = login.authenticated;
 app.get('/', authenticated, routes.index);
 app.get('/vote', authenticated, vote.display);
 app.post('/submit', authenticated, vote.submit);
-app.get("/group", authenticated, group.display);
-app.post("/group/create", authenticated, group.createValidator, group.create);
-app.post("/group/join", authenticated, group.join);
+require("./routes/group")(app);
+require("./routes/group/create")(app);
+require("./routes/group/join")(app);
 
 app.get('/signup', signup.display);
 app.post('/signup', signup.validator, signup.signup);
