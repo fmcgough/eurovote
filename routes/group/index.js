@@ -1,7 +1,7 @@
 var models = require("../../models"),
     Group = models.Group,
     User = models.User,
-    authenticated = require("../login").authenticated;
+    authenticated = require("../auth").authenticated;
 
 module.exports = function(app) {
     app.get("/group", authenticated, function(req, res){

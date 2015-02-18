@@ -5,11 +5,11 @@ var expect = require("chai").expect,
 var app = sinon.stub();
 var models = sinon.stub();
 var Group = models.Group = sinon.stub();
-var login = { authenticated: sinon.stub() };
+var auth = { authenticated: sinon.stub() };
 var post = app.post = sinon.stub();
 
 var joinGroup = proxyquire("../../routes/group/create", {
-    "../login" : login,
+    "../auth" : auth,
     "../../models": models
 });
 
@@ -40,6 +40,6 @@ describe("POST /group/create", function() {
     });
 
     it("requires authentication to create a group", function() {
-        expect(post.calledWith("/group/create", login.authenticated)).to.be.true;
+        expect(post.calledWith("/group/create", auth.authenticated)).to.be.true;
     });
 });

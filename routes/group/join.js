@@ -1,6 +1,6 @@
 var models = require("../../models"),
     Group = models.Group,
-    authenticated = require("../login").authenticated;
+    authenticated = require("../auth").authenticated;
 
 module.exports = function(app) {
     app.post("/group/join", authenticated, function(req, res) {

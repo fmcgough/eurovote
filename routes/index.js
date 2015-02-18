@@ -1,25 +1,24 @@
+"use strict";
 
-/*
- * GET home page.
- */
+var fs = require("fs");
+var path = require("path");
+var recursive = require("recursive-readdir");
+var basename  = path.basename(module.filename);
 
-var models = require("../models");
-var sequelize = models.sequelize;
-
-exports.index = function(req, res) {
-	models.Country.findAll({
-		include: [{
-			model: models.Vote
-		}],
-		attributes: [[sequelize.fn("SUM", sequelize.col("Votes.score")), "total"],
-					[sequelize.col("Country.name"), "name"]],
-		group: [ "Country.id" ],
-		order: "total DESC"
-	}).then(function(countries){
-		res.render("index", {
-			title: "Eurovision 2015",
-			navbarActive: "Home",
-			countries: countries
-		});
-	});
-};
+module.exports = function(app) {
+    recursive(__dirname, [".*", module.filename], function(err, files){
+        files.map(function(file){
+            var relative = path.relative(__dirname, file);
+            var moduleName = path.dirname(relative) +
+                    path.sep + path.basename(relative, ".js");
+            if (moduleName.slice(0, 2) != "./") {
+                moduleName = "./" + moduleName;
+            }
+            console.log(moduleName);
+            var mod = require(moduleName);
+            if (typeof mod === "function") {
+                mod(app);
+            }
+        });
+    });
+}

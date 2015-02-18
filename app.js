@@ -12,13 +12,9 @@ var favicon = require('serve-favicon');
 var path = require('path');
 var session = require('express-session');
 
-var routes = require('./routes');
-var vote = require('./routes/vote');
 var models = require('./models');
-var signup = require('./routes/signup');
-var login = require('./routes/login');
-var group = require("./routes/group");
-var passport = login.passport;
+var auth = require("./routes/auth");
+var passport = auth.passport;
 
 var app = express();
 
@@ -52,23 +48,8 @@ if ('development' == app.get('env')) {
 
 app.use(passport.initialize());
 app.use(passport.session());
-// Helper middleware to give easy access to logged in username
-app.use(login.locals);
 
-var authenticated = login.authenticated;
-// TODO extract into separate router module
-app.get('/', authenticated, routes.index);
-app.get('/vote', authenticated, vote.display);
-app.post('/submit', authenticated, vote.submit);
-require("./routes/group")(app);
-require("./routes/group/create")(app);
-require("./routes/group/join")(app);
-
-app.get('/signup', signup.display);
-app.post('/signup', signup.validator, signup.signup);
-app.get("/login", login.display);
-app.post("/login", login.login);
-app.get("/logout", login.logout);
+require("./routes")(app);
 
 models.sequelize.sync().then(function() {
 	app.listen(app.get('port'), function(){

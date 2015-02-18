@@ -2,7 +2,7 @@ var models = require("../../models"),
     Group = models.Group,
     form = require("express-form"),
     field = form.field,
-    authenticated = require("../login").authenticated;
+    authenticated = require("../auth").authenticated;
 
 var createValidator = form(
     field("groupName", "Group name").trim().required()

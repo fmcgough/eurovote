@@ -6,11 +6,11 @@ var app = sinon.stub();
 var models = sinon.stub();
 var Group = models.Group = sinon.stub();
 var User = models.User = sinon.stub();
-var login = { authenticated: sinon.stub() };
+var auth = { authenticated: sinon.stub() };
 var get = app.get = sinon.stub();
 
 var group = proxyquire("../../routes/group", {
-    "../login" : login,
+    "../auth" : auth,
     "../../models": models
 });
 describe("GET /group", function() {
@@ -37,7 +37,7 @@ describe("GET /group", function() {
 
     it("requires authentication to display the group page", function() {
         expect(get.args[0][0]).to.equal("/group");
-        expect(get.calledWith("/group", login.authenticated)).to.be.true;
+        expect(get.calledWith("/group", auth.authenticated)).to.be.true;
     });
 
     it("gets the user's group to display on the home page", function() {
