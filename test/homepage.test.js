@@ -3,6 +3,12 @@ var expect = require("chai").expect,
 	sinon = require("sinon");
 
 var models = {};
+var app = sinon.stub();
+var auth = { authenticated: sinon.stub() };
+var get = app.get = sinon.stub();
+var Country = models.Country = sinon.stub();
+var Vote = models.Vote = sinon.stub();
+
 
 var countries = [ { id: 0,
 				name: "Narnia",
@@ -11,12 +17,10 @@ var countries = [ { id: 0,
 				name: "Archenland",
 				dataValues: {total: 10} } ];
 
-var index = proxyquire("../routes/index", {
-	'../models': models
+var homepage = proxyquire("../routes/homepage", {
+	'../models': models,
+	"./auth": auth
 });
-
-var Country = models.Country = sinon.stub();
-var Vote = models.Vote = sinon.stub();
 
 describe("routes/index", function() {
 	var req = {}, res = {};
@@ -24,22 +28,25 @@ describe("routes/index", function() {
 	var promise = sinon.stub();
 	promise.then = sinon.stub().callsArgWith(0, countries);
 	Country.findAll = sinon.stub().returns(promise);
+	var display;
 
 	beforeEach(function() {
+		homepage(app);
 		spy.reset();
 		promise.then.reset();
 		Country.findAll.reset();
+		display = get.args[0][2];
 	});
 
 	it("should render home page", function() {
-		index.index(req, res);
+		display(req, res);
 
 		expect(spy.calledOnce).to.equal(true);
 		expect(spy.args[0][0]).to.equal("index");
 	});
 
 	it("should set page title and navbarActive properties", function() {
-		index.index(req, res);
+		display(req, res);
 
 		var locals = spy.args[0][1];
 		expect(locals).to.have.property("title").that.equals("Eurovision 2015");
@@ -47,14 +54,18 @@ describe("routes/index", function() {
 	});
 
 	it("should include countries in the response", function() {
-		index.index(req, res);
+		display(req, res);
 
 		var locals = spy.args[0][1];
 		expect(locals).to.have.property("countries").that.deep.equals(countries);
 	});
 
 	it("should order countries by score", function() {
-		index.index(req, res);
+		display(req, res);
 		expect(Country.findAll.args[0][0]).to.have.property("order").that.equals("total DESC");
+	});
+
+	it("should require authentication to view the homepage", function() {
+		expect(get.args[0][1]).to.deep.equal(auth.authenticated);
 	});
 });

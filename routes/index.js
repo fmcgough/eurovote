@@ -14,10 +14,9 @@ module.exports = function(app) {
             if (moduleName.slice(0, 2) != "./") {
                 moduleName = "./" + moduleName;
             }
-            console.log(moduleName);
-            var mod = require(moduleName);
-            if (typeof mod === "function") {
-                mod(app);
+            var route = require(moduleName);
+            if (typeof route === "function") {
+                route(app);
             }
         });
     });

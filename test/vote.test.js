@@ -3,17 +3,28 @@ var expect = require("chai").expect,
 	sinon = require("sinon");
 
 var models = {};
+var app = sinon.stub();
+var auth = { authenticated: sinon.stub() };
+var get = app.get = sinon.stub();
+var post = app.post = sinon.stub();
+var Country = models.Country = sinon.stub();
+var Vote = models.Vote = sinon.stub();
 
 var vote = proxyquire("../routes/vote", {
-	"../models": models
+	"../models": models,
+	"./auth": auth
 });
-
-var Vote = models.Vote = sinon.stub();
-var Country = models.Country = sinon.stub();
 
 describe("routes/vote", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
+	var display, submit;
+
+	before(function() {
+		vote(app);
+		display = get.args[0][2];
+		submit = post.args[0][2];
+	});
 
 	beforeEach(function() {
 		spy.reset();
@@ -33,13 +44,13 @@ describe("routes/vote", function() {
 		});
 
 		it("should render voting page", function() {
-			vote.display(req, res);
+			display(req, res);
 			expect(spy.calledOnce).to.equal(true);
 			expect(spy.args[0][0]).to.equal("vote");
 		});
 
 		it("should set page title and navbarActive properties", function() {
-			vote.display(req, res);
+			display(req, res);
 
 			var locals = spy.args[0][1];
 
@@ -48,14 +59,14 @@ describe("routes/vote", function() {
 		});
 
 		it("should include countries in the response", function() {
-			vote.display(req, res);
+			display(req, res);
 
 			var locals = spy.args[0][1];
 			expect(locals).to.have.property("countries").that.deep.equals(countries);
 		});
 
 		it("should order the countries by name", function() {
-			vote.display(req, res);
+			display(req, res);
 
 			var call = Country.findAll.getCall(0);
 			expect(call.args[0]).to.have.property("order").that.equals("name ASC");
@@ -84,7 +95,7 @@ describe("routes/vote", function() {
 		});
 
 		it("should insert all the votes", function() {
-			vote.submit(req, res);
+			submit(req, res);
 
 			expect(Vote.create.callCount).to.equal(votes.length);
 			for (var i = 0; i < Vote.create.callCount; i++) {
@@ -97,7 +108,7 @@ describe("routes/vote", function() {
 		});
 
 		it("should respond OK if no error thrown", function() {
-			vote.submit(req, res);
+			submit(req, res);
 
 			expect(res.sendStatus.calledWith(200)).to.equal(true);
 		});
@@ -106,7 +117,7 @@ describe("routes/vote", function() {
 			var err = "test error";
 			promise.complete.callsArgWith(0, err);
 
-			vote.submit(req, res);
+			submit(req, res);
 
 			expect(res.status.calledWith(500)).to.equal(true);
 			expect(res.send.calledOnce).to.equal(true);

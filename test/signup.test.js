@@ -5,9 +5,15 @@ var expect = require("chai").expect,
 var models = {};
 var User = models.User = {};
 var bcrypt = {};
+var app = sinon.stub();
+var auth = { authenticated: sinon.stub() };
+var get = app.get = sinon.stub();
+var post = app.post = sinon.stub();
+
 var signup = proxyquire("../routes/signup", {
     "../models" : models,
-    "bcrypt-nodejs": bcrypt
+    "bcrypt-nodejs": bcrypt,
+    "./auth": auth
 });
 
 describe("/signup", function() {
@@ -15,6 +21,14 @@ describe("/signup", function() {
     var spy = res.render = sinon.stub();
     var status = res.status = sinon.stub().returns(res);
     var then, promise, complete;
+    var display, submit, validator;
+
+    before(function() {
+        signup(app);
+        display = get.args[0][1];
+        validator = post.args[0][1];
+        submit = post.args[0][2];
+    });
 
     beforeEach(function() {
         spy.reset();
@@ -24,7 +38,7 @@ describe("/signup", function() {
     describe("GET /signup", function() {
 
         it("should render the signup page", function() {
-            signup.display(req, res);
+            display(req, res);
             expect(spy.calledOnce).to.equal(true);
             expect(spy.args[0][0]).to.equal("signup");
             expect(spy.args[0][1]).to.deep.equal({title: "Sign Up"});
@@ -39,14 +53,14 @@ describe("/signup", function() {
 
         it("should require an email", function() {
             req.body.email = "";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("email")).to.have.length.at.least(1);
         });
 
         it("should require a valid email address", function() {
             req.body.email = "not an email address";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("email")).to.have.length.at.least(1);
         });
@@ -54,35 +68,35 @@ describe("/signup", function() {
         it("should require a username", function() {
             req.body.email = "an@email.com";
             req.body.username = "";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("username")).to.have.length.at.least(1);
         });
 
         it("should reject non-alphanumeric characters in username", function() {
             req.body.username = "abdthib45$\"%$^&^%*";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("username")).to.have.length.at.least(1);
         });
 
         it("should require a password", function() {
             req.body.password = "";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("password")).to.have.length.at.least(1);
         })
 
         it("should require a password of length at least 8", function() {
             req.body.password = "1234567";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("password")).to.have.length.at.least(1);
         });
 
         it("should require password confirmation", function() {
             req.body.confirmPassword = "";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("confirmPassword")).to.have.length.at.least(1);
         });
@@ -90,7 +104,7 @@ describe("/signup", function() {
         it("should require password confirmation to match password", function() {
             req.body.password = "12345678";
             req.body.confirmPassword = "something";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(false);
             expect(req.form.getErrors("confirmPassword")).to.have.length.at.least(1);
         });
@@ -100,7 +114,7 @@ describe("/signup", function() {
             req.body.email = "  an@example.com      ";
             req.body.password = "12345678";
             req.body.confirmPassword = "12345678";
-            signup.validator(req, {});
+            validator(req, {});
             expect(req.form.isValid).to.equal(true);
         });
     });
@@ -135,7 +149,7 @@ describe("/signup", function() {
             req.form.isValid = false;
             var errors = req.form.errors = ["blah", "blah blah"];
 
-            signup.signup(req, res);
+            submit(req, res);
             expect(status.calledOnce).to.equal(true);
             expect(status.args[0][0]).to.equal(400);
             expect(spy.calledOnce).to.equal(true);
@@ -146,7 +160,7 @@ describe("/signup", function() {
 
         it("should check for existing users with username", function() {
             then.onFirstCall().callsArgWith(0, [{}]);
-            signup.signup(req, res);
+            submit(req, res);
             expect(User.findAll.callCount).to.be.at.least(1);
 
             expectSignupError("Username is already in use");
@@ -164,14 +178,14 @@ describe("/signup", function() {
 
         it("should check for existing users with email address", function() {
             then.onSecondCall().callsArgWith(0, [{}]);
-            signup.signup(req, res);
+            submit(req, res);
             expect(User.findAll.callCount).to.be.at.least(1);
 
             expectSignupError("User already exists for this email address");
         });
 
         it("should create user in database", function() {
-            signup.signup(req, res);
+            submit(req, res);
             expect(User.findAll.callCount).to.equal(2);
             expect(User.create.callCount).to.equal(1);
             expect(User.create.calledWith(sinon.match({
@@ -181,7 +195,7 @@ describe("/signup", function() {
         });
 
         it("should store user with hashed password", function() {
-            signup.signup(req, res);
+            submit(req, res);
 
             var userInserted = User.create.args[0][0];
             expect(userInserted).to.have.property("passwordHash").that.equals("TEST_HASH");
@@ -190,7 +204,7 @@ describe("/signup", function() {
         it("should send a confirmation email");
 
         it("should login and redirect to the home page", function() {
-            signup.signup(req, res);
+            submit(req, res);
             expect(logIn.calledOnce).to.equal(true);
             expect(redirect.calledOnce).to.equal(true);
             expect(redirect.calledWith("/")).to.equal(true);
