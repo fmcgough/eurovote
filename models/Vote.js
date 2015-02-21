@@ -8,9 +8,10 @@ module.exports = function(sequelize, DataTypes) {
 		classMethods: {
 			associate: function(models) {
 				Vote.belongsTo(models.Country);
+				Vote.belongsTo(models.Group);
 			}
 		}
 	});
-	
+
 	return Vote;
 };

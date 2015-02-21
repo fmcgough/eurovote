@@ -19,7 +19,7 @@ module.exports = function(app) {
 
 	app.post("/vote", auth.authenticated, function(req, res) {
 		var votes = JSON.parse(req.body.data);
-		insertVotes(votes, function(err) {
+		insertVotes(votes, req.user, function(err) {
 			if (err) {
 				res.status(500).send("Sorry, something went wrong!");
 			} else {
@@ -29,15 +29,20 @@ module.exports = function(app) {
 	});
 }
 
-function insertVotes(votes, complete) {
-	async.each(votes, function(vote, callback){
-    	models.Vote.create({
-    		CountryId: vote.id,
-    		score: vote.score
-    	}).complete(function(err, result) {
-    		callback(err);
-    	});
-    }, function(err){
-        complete(err);
-    });
+function insertVotes(votes, user, complete) {
+	user.getGroup().then(function(group){
+		async.each(votes, function(vote, callback){
+			models.Vote.create({
+				CountryId: vote.id,
+				score: vote.score,
+				GroupId: group.id
+			}).complete(function(err, result) {
+				callback(err);
+			});
+		}, function(err){
+			complete(err);
+		});
+	}).catch(function(err){
+		complete(err);
+	});
 }

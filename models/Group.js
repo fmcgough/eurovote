@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 Group.hasMany(models.User);
+                Group.hasMany(models.Vote);
             }
         }
     });

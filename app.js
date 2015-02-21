@@ -48,6 +48,7 @@ if ('development' == app.get('env')) {
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(auth.locals);
 
 require("./routes")(app);
 

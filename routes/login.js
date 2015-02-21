@@ -58,13 +58,4 @@ module.exports = function(app) {
         }
         res.redirect("/login");
     });
-
-    // Helper middleware to give easy access to logged in username
-    app.use(function(req, res, next) {
-        res.locals.isAuthenticated = req.isAuthenticated();
-        if (req.user){
-            res.locals.username = req.user.username;
-        }
-        next();
-    });
 }
