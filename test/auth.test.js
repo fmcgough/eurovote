@@ -141,4 +141,29 @@ describe("authentication", function() {
             expect(done.calledWith(err)).to.be.true;
         });
     });
+
+
+    describe("locals", function() {
+        var req = {}, res = {}, next = sinon.stub();
+        req.isAuthenticated = sinon.stub().returns(true);
+
+        beforeEach(function() {
+            res.locals = {};
+            next.reset();
+        });
+
+        it("should set the authentication status on the response", function() {
+            auth.locals(req, res, next);
+            expect(res.locals.isAuthenticated).to.be.true;
+            expect(next.calledOnce).to.be.true;
+        });
+
+        it("should set the username on the response if a user is present", function() {
+            req.user = {username: "username"};
+            auth.locals(req, res, next);
+            expect(res.locals.isAuthenticated).to.be.true;
+            expect(res.locals.username).to.equal("username");
+            expect(next.calledOnce).to.be.true;
+        });
+    });
 });

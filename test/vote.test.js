@@ -84,14 +84,19 @@ describe("routes/vote", function() {
 		res.sendStatus = sinon.stub();
 		res.status = sinon.stub().returns(res);
 		var promise = sinon.stub();
-		promise.complete = sinon.stub();
+		promise.then = sinon.stub();
+		promise.catch = sinon.stub();
 		Vote.create = sinon.stub().returns(promise);
+		var user = req.user = {};
+		user.getGroup = sinon.stub().returns(promise);
+		var group = {id: 1};
 
 		beforeEach(function() {
 			Vote.create.reset();
 			Vote.create.returns(promise);
-			promise.complete.reset();
-			promise.complete.callsArg(0);
+			promise.then.reset();
+			promise.then.onFirstCall().yields([group]).returns(promise);
+			promise.then.yields();
 		});
 
 		it("should insert all the votes", function() {
@@ -115,7 +120,7 @@ describe("routes/vote", function() {
 
 		it("should respond with an error message if there is an error", function() {
 			var err = "test error";
-			promise.complete.callsArgWith(0, err);
+			promise.then.onSecondCall().yields([err]);
 
 			submit(req, res);
 

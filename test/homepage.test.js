@@ -26,9 +26,12 @@ describe("routes/index", function() {
 	var req = {}, res = {};
 	var spy = res.render = sinon.spy();
 	var promise = sinon.stub();
-	promise.then = sinon.stub().callsArgWith(0, countries);
+	promise.then = sinon.stub().callsArgWith(0, countries).returns(promise);
+	promise.catch = sinon.stub();
 	Country.findAll = sinon.stub().returns(promise);
 	var display;
+	var user = req.user = {};
+	user.getGroup = sinon.stub().returns(promise);
 
 	beforeEach(function() {
 		homepage(app);

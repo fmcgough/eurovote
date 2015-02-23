@@ -25,7 +25,6 @@ describe("login", function() {
         display = get.args[0][1];
         doLogin = post.args[0][1];
         doLogout = get.args[1][1];
-        locals = use.args[0][0];
     });
 
     describe("GET /login", function() {
@@ -125,30 +124,6 @@ describe("login", function() {
             doLogout(req, res);
             expect(req.logout.called).to.be.false;
             expect(res.redirect.calledWith("/login")).to.be.true;
-        });
-    });
-
-    describe("locals", function() {
-        var req = {}, res = {}, next = sinon.stub();
-        req.isAuthenticated = sinon.stub().returns(true);
-
-        beforeEach(function() {
-            res.locals = {};
-            next.reset();
-        });
-
-        it("should set the authentication status on the response", function() {
-            locals(req, res, next);
-            expect(res.locals.isAuthenticated).to.be.true;
-            expect(next.calledOnce).to.be.true;
-        });
-
-        it("should set the username on the response if a user is present", function() {
-            req.user = {username: "username"};
-            locals(req, res, next);
-            expect(res.locals.isAuthenticated).to.be.true;
-            expect(res.locals.username).to.equal("username");
-            expect(next.calledOnce).to.be.true;
         });
     });
 });

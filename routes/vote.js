@@ -36,7 +36,7 @@ function insertVotes(votes, user, complete) {
 				CountryId: vote.id,
 				score: vote.score,
 				GroupId: group.id
-			}).complete(function(err, result) {
+			}).then(function(err, result) {
 				callback(err);
 			});
 		}, function(err){
