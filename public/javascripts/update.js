@@ -1,17 +1,21 @@
+function getResults() {
+    $.ajax("../results").success(function(data){
+        $("#results").html(data);
+    }).error(function(xhr, status, description) {
+        console.log("Error: " + description);
+    });
+}
+
 $(function() {
-    // now.receiveUpdate = function(data) {
-    //     console.log("Received update: " + JSON.stringify(data));
+    getResults();
+    var autoRefresh;
 
-    //     var newrows;
-    //     for (var i = 0; i < data.length; i++) {
-    //         newrows += "<tr><td>"
-    //                 + "<span><img src=\"/images/" + data[i].country + ".png\" class=\"flag-small\"></span>"
-    //                 + data[i].country
-    //                 + "</td><td>"
-    //                 + data[i].score
-    //                 + "</td></tr>";
-    //     }
-    //     $("#results tbody").html(newrows);
-    // };
-
+    $("#auto-refresh").bootstrapSwitch();
+    $("#auto-refresh").on("switchChange.bootstrapSwitch", function(event, state){
+        if (state) {
+            autoRefresh = setInterval(getResults, 30000); // auto refresh every 30 secs
+        } else {
+            clearInterval(autoRefresh);
+        }
+    });
 });

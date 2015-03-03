@@ -3,14 +3,14 @@ html
   head
     title= title
     link(rel='stylesheet', href='/bootstrap-3.1.1-dist/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/bootstrap-3.1.1-dist/css/bootstrap-theme.min.css')
-    script(src="/javascripts/jquery.min.js")
+    link(rel='stylesheet', href='/bootstrap-switch-dist/css/bootstrap3/bootstrap-switch.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="/javascripts/jquery.min.js")
+    script(src="/bootstrap-switch-dist/js/bootstrap-switch.min.js")
   body
     include navbar
 
     .container.theme-showcase(role='main')
         block content
 
-    // Bootstrap core javascript, placed at the end so pages load faster
     script(src="/bootstrap-3.1.1-dist/js/bootstrap.min.js")

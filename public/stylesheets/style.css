@@ -83,9 +83,21 @@ a:hover, a:visited, a:active, a:focus {
   padding-right: 10px;
 }
 
+.btn {
+    border-radius: 0px!important;
+}
+
+.bootstrap-switch, .bootstrap-switch-label, .bootstrap-switch-handle-on, .bootstrap-switch-handle-off {
+    border-radius: 0px;
+    border-bottom-left-radius: 0px!important;
+    border-bottom-right-radius: 0px!important;
+    border-top-left-radius: 0px!important;
+    border-top-right-radius: 0px!important;
+}
+
 .btn-vote {
   background-color: #AB00D6;
-  border-radius: 0;
+  border-radius: 0px;
 }
 
 .btn-vote:hover, .btn-vote:focus {
@@ -115,6 +127,14 @@ a:hover, a:visited, a:active, a:focus {
 
 .no-gutter-right {
     padding-right: 0!important;
+}
+
+.space-6 {
+    margin-top: 6px;
+}
+
+.space-12 {
+    margin-top: 12px;
 }
 
 /* Nestable things */

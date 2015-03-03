@@ -2,21 +2,15 @@ extends layout
 
 block content
     .container.theme-showcase(role="main")
-        p.lead.transparent-grey.panel-body Welcome to #{title}! Cast your votes <a href='/vote'>here</a>.
-
-        h2.col-md-3.panel-body.transparent-grey Results
-        .table-responsive
-            table#results.table.table-euro.table-no-border
-                thead
-                    tr
-                        th Country
-                        th Score
-                tbody
-                    - each country in countries
-                        tr
-                            td
-                                span
-                                    img.flag-small(src="/images/" + country.name + ".png")
-                                |#{country.name}
-                            td #{country.dataValues.total}
+        .row.transparent-grey
+            .col-md-12
+                h3  Results
+        .row.space-6
+        .row
+            .col-md-12.no-gutter-right
+                .pull-right
+                    input#auto-refresh(type="checkbox" name="auto-refresh" 
+                            data-label-text="<span class='glyphicon glyphicon-refresh'></span>")
+        .row.space-6
+        #results
     script(src='/javascripts/update.js')
