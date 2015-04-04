@@ -16,12 +16,12 @@
                         li: a(href=url)=page
             .navbar-right
                 if isAuthenticated
-                    button.btn.btn-link.navbar-btn.navbar-right
-                        a(href="/logout") Log out
+                    button.btn.btn-link.navbar-btn
+                        a.navbar-link(href="/logout") Log out
                     strong.navbar-text
                         span.glyphicon.glyphicon-user(aria-hidden="true")  #{username}
                 else
                     button.btn.btn-link.navbar-btn.btn-right
-                        a(href="/login") Log in
+                        a.navbar-link(href="/login") Log in
                     button.btn.btn-link.navbar-btn.btn-right
-                        a(href="/signup") Sign up
+                        a.navbar-link(href="/signup") Sign up

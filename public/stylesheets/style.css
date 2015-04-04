@@ -9,11 +9,11 @@ body {
   background-attachment: fixed;
 }
 
-a {
+a.navbar-link {
   color: #AB00D6;
 }
 
-a:hover, a:visited, a:active, a:focus {
+a.navbar-link:hover, a.navbar-link:visited, a.navbar-link:active, a.navbar-link:focus {
     color: #dddddd;
 }
 
@@ -31,7 +31,7 @@ a:hover, a:visited, a:active, a:focus {
 }
 
 .navbar-transparent .navbar-nav > li > a:hover, .nav > li > a:focus {
-  background-color: #AB00D6;
+  background-color: #82198c;
 }
 
 .table-euro {
@@ -44,7 +44,7 @@ a:hover, a:visited, a:active, a:focus {
 
 .table-euro > thead > tr > th {
   background-color: rgba(255, 255, 255, 0.7);
-  color: #AB00D6;
+  color: #82198c;
 }
 
 .transparent-grey {
@@ -114,6 +114,16 @@ a:hover, a:visited, a:active, a:focus {
 .btn-vote-inverse:hover, .btn-vote-inverse:focus {
     background-color: #AB00D6;
     color: rgba(255, 255, 255, 0.7);
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary,
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {
+  color: #fff;
+  background: #82198c;
+}
+
+.bootstrap-switch.bootstrap-switch-focused {
+  border-color: #aaa;
 }
 
 .submit-vote {
