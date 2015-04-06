@@ -1,5 +1,7 @@
 function getResults() {
-    $.ajax("../results").success(function(data){
+    $.ajax("../results", {
+        cache: false
+    }).success(function(data){
         $("#results").html(data);
     }).error(function(xhr, status, description) {
         console.log("Error: " + description);

@@ -11,6 +11,7 @@ var errorHandler = require('errorhandler');
 var favicon = require('serve-favicon');
 var path = require('path');
 var session = require('express-session');
+var http = require('http');
 
 var models = require('./models');
 var auth = require("./routes/auth");
@@ -53,7 +54,9 @@ app.use(auth.locals);
 require("./routes")(app);
 
 models.sequelize.sync().then(function() {
-	app.listen(app.get('port'), function(){
+	var server = http.createServer(app);
+	require("./sockets")(server);
+	server.listen(app.get('port'), function(){
 		console.log('Express server listening on port ' + app.get('port'));
 	});
 });
