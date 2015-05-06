@@ -70,6 +70,11 @@ a.navbar-link:hover, a.navbar-link:visited, a.navbar-link:active, a.navbar-link:
   font-size: 16px;
 }
 
+.table-euro .vote-total {
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .flag-small {
   max-height: 22px;
   height: auto;
@@ -281,4 +286,35 @@ a.navbar-link:hover, a.navbar-link:visited, a.navbar-link:active, a.navbar-link:
 .dd-dragel .dd-handle {
     -webkit-box-shadow: 2px 4px 6px 0 rgba(0,0,0,.1);
             box-shadow: 2px 4px 6px 0 rgba(0,0,0,.1);
+}
+
+.tweets {
+    height: auto;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.tweet {
+    background-color: #101010!important;
+    display: block;
+}
+
+.smaller {
+    font-size: 13px;
+}
+
+.muted {
+    color: #666666;
+}
+
+.tweet-img {
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.bootstrap-switch {
+    margin-top: 10px;
+    margin-right: 10px;
 }

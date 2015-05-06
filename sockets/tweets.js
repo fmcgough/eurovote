@@ -16,7 +16,7 @@ module.exports = function(server) {
     });
 
     // TODO - make tracking configurable
-    client.stream("statuses/filter", {track: 'eurovision2015'}, function(stream) {
+    client.stream("statuses/filter", {track: 'eurovision2015,#greenparty'}, function(stream) {
         stream.on('data', function(tweet) {
             console.log(tweet.text);
             tweets.emit('tweet', tweet);

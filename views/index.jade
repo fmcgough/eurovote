@@ -2,16 +2,40 @@ extends layout
 
 block content
     .container.theme-showcase(role="main")
-        .row.transparent-grey
-            .col-md-12
-                h3  Results
-        .row.space-6
-        .row
-            .col-md-12.no-gutter-right
-                .pull-right
-                    input#auto-refresh(type="checkbox" name="auto-refresh" 
-                            data-label-text="<span class='glyphicon glyphicon-refresh'></span>")
-        .row.space-6
-        #results
+        .col-md-6
+            .panel-body
+                .row.transparent-grey
+                    .col-md-12.no-gutter-right
+                        .pull-right
+                            input#auto-refresh(type="checkbox" name="auto-refresh" 
+                                    data-label-text="<span class='glyphicon glyphicon-refresh'></span>")
+                        h3  Results
+                .row.space-6
+                .row
+                    .col-md-12.no-gutter-right
+                        
+                .row.space-6
+                #results
+        .col-md-6
+            .panel-body
+                .row.transparent-grey
+                    .col-md-12
+                        h3 Twitter Feed
+                    .tweets.panel-body
+                        .tweet.panel-body.panel
+                            img.tweet-img(src="https://pbs.twimg.com/profile_images/543863580844498944/ZbyZ_GiR_400x400.jpeg")
+                            .tweet-body
+                                .tweet-header
+                                    i.tweet-time.pull-right.smaller.muted 1/1/1970 00:00
+                                    strong.username SomeUser 
+                            .tweet-text Something something eurovision
+                        .clearfix
+        #tweet-template.tweet.panel-body.panel.hidden
+            img.tweet-img
+            .tweet-body
+                .tweet-header 
+                    i.tweet-time.pull-right.smaller.muted 1/1/1970 00:00
+                    strong.username SomeUser 
+                .tweet-text Something something eurovision
     script(src='/javascripts/update.js')
     script(src='/javascripts/tweets.js')
